@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { motion, AnimatePresence } from "framer-motion";
 
-// FIX: Define the TextReveal component for staggered text animations
 const TextReveal = ({ children, delay = 0 }) => (
   <div style={{ overflow: "hidden" }}>
     <motion.div
@@ -15,9 +14,7 @@ const TextReveal = ({ children, delay = 0 }) => (
   </div>
 );
 
-// FIX: Define the FloatingCard which is just the ProductCard with animation props.
-// We will apply these animations directly to ProductCard since it's already a motion component.
-// For clarity, I'm renaming ProductCard to AnimatedProductCard to make its purpose clear.
+
 const AnimatedProductCard = styled(motion.div)`
   background: rgba(255, 255, 255, 0.9);
   border-radius: 25px;
@@ -182,8 +179,7 @@ const AnimatedProductCard = styled(motion.div)`
 `;
 
 
-// --- ALL OTHER STYLED COMPONENTS (Container, Navbar, etc.) ---
-// --- They remain the same as in your original code ---
+
 const FluidBackground = styled.div`
   position: fixed;
   top: 0;
@@ -700,7 +696,7 @@ const Copyright = styled.div`
   color: #a0aec0;
   font-size: 0.9rem;
 `;
-// --- REACT APP COMPONENT (with merged logic and structure) ---
+
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -910,7 +906,7 @@ function App() {
       <MainContent>
         <HeroSection>
           <HeroContent>
-            {/* FIX: Using the defined TextReveal component */}
+           
             <TextReveal>
               <h1>Discover Luxury at Your Fingertips</h1>
             </TextReveal>
@@ -921,7 +917,7 @@ function App() {
               </p>
             </TextReveal>
             <TextReveal delay={400}>
-               {/* FIX: Removed the undefined PulseLoader and used standard framer-motion props on the button itself */}
+   
               <motion.button
                 whileHover={{
                   scale: 1.05,
@@ -952,7 +948,7 @@ function App() {
           <ProductGrid>
             <AnimatePresence>
               {featuredProducts.map((product, index) => (
-                // FIX: Using the corrected AnimatedProductCard and applying animations
+           
                 <AnimatedProductCard
                   key={`featured-${product.id}`}
                   layout
@@ -1044,7 +1040,7 @@ function App() {
           <ProductGrid ref={productGridRef}>
             <AnimatePresence>
               {currentProducts.map((product, index) => (
-                // FIX: Applying the same consistent animation to this grid
+              
                 <AnimatedProductCard
                   key={product.id}
                   layout
@@ -1144,8 +1140,7 @@ function App() {
             </TextReveal>
             <TestimonialsGrid>
               {testimonials.map((testimonial, index) => (
-                // FIX: This structure was mostly correct, just cleaned it up.
-                // The motion.div wrapper is correct because TestimonialCard is not a motion component.
+             
                 <motion.div
                   key={testimonial.id}
                   initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
