@@ -19,6 +19,8 @@ A modern and luxurious e-commerce platform built with cutting-edge technologies 
 - Vite
 - CSS
 - JavaScript
+- React Bits
+- Material UI
 
 ## 📋 Prerequisites
 
@@ -30,7 +32,7 @@ Before you begin, ensure you have the following installed:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/Luxe-Cart.git
+https://github.com/Sanka-47/-Luxe-Cart.git
 ```
 
 2. Navigate to the project directory:
@@ -68,9 +70,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-Your Name - [@yourusername](https://github.com/yourusername)
+Your Name - Sanka47 (kalindu47kk@gmail.com)
 
-Project Link: [https://github.com/yourusername/Luxe-Cart](https://github.com/yourusername/Luxe-Cart)
+Project Link: https://github.com/Sanka-47/-Luxe-Cart.git
 
 ## 🙏 Acknowledgments
 
