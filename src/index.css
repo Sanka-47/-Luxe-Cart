@@ -18,6 +18,12 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  cursor: inherit;
+  transition: cursor 0.1s ease-out;
+  will-change: cursor;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 body {
@@ -25,4 +31,6 @@ body {
   min-width: 320px;
   min-height: 100vh;
   color: #213547;
+  cursor: default;
+  transition: cursor 0.2s ease-in-out;
 }
