@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -33,7 +33,9 @@ const AnimatedProductCard = styled(motion.div)`
     gap: 0.75rem;
     opacity: 0;
     transform: translateY(15px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), cursor 0.08s ease-out;
+     will-change: cursor, transform;
+     transform: translateZ(0);
     padding: 0 1.5rem 1.5rem;
   }
 
@@ -150,7 +152,9 @@ const AnimatedProductCard = styled(motion.div)`
     border-radius: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), cursor 0.08s ease-out;
+     will-change: cursor, transform;
+     transform: translateZ(0);
     font-size: 0.9rem;
 
     &.add-to-cart {
@@ -392,8 +396,10 @@ const HeroContent = styled.div`
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), cursor 0.08s ease-out;
+     will-change: cursor, transform;
+     transform: translateZ(0);
+     backdrop-filter: blur(10px);
     letter-spacing: 0.5px;
   }
 `;
@@ -450,6 +456,7 @@ const SearchBar = styled.div`
     border: none;
     border-radius: 25px;
     font-size: 1.1rem;
+    color: #374151;
     background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
@@ -490,7 +497,7 @@ const FilterButton = styled.button`
   color: ${(props) => (props.active ? "white" : "#4a5568")};
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), cursor 0.15s ease-in-out;
   box-shadow: ${(props) =>
     props.active
       ? "0 8px 25px rgba(102, 126, 234, 0.3)"
@@ -711,6 +718,17 @@ function App() {
     { id: 3, x: 1000, y: 300, size: 200 },
   ]);
   const productsPerPage = 8;
+  const productGridRef = useRef(null);
+
+  // Function to scroll to product grid
+  const scrollToProductGrid = () => {
+    if (productGridRef.current) {
+      productGridRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
 
   // Track mouse movement for fluid animation
   useEffect(() => {
@@ -1023,7 +1041,7 @@ function App() {
             ))}
           </CategoryFilter>
 
-          <ProductGrid>
+          <ProductGrid ref={productGridRef}>
             <AnimatePresence>
               {currentProducts.map((product, index) => (
                 // FIX: Applying the same consistent animation to this grid
@@ -1081,7 +1099,10 @@ function App() {
 
           <Pagination>
             <button
-              onClick={() => setCurrentPage((p) => p - 1)}
+              onClick={() => {
+                setCurrentPage((p) => p - 1);
+                scrollToProductGrid();
+              }}
               disabled={currentPage === 1}
             >
               Previous
@@ -1089,14 +1110,20 @@ function App() {
             {[...Array(totalPages)].map((_, index) => (
               <button
                 key={index + 1}
-                onClick={() => setCurrentPage(index + 1)}
+                onClick={() => {
+                  setCurrentPage(index + 1);
+                  scrollToProductGrid();
+                }}
                 className={currentPage === index + 1 ? "active" : ""}
               >
                 {index + 1}
               </button>
             ))}
             <button
-              onClick={() => setCurrentPage((p) => p + 1)}
+              onClick={() => {
+                setCurrentPage((p) => p + 1);
+                scrollToProductGrid();
+              }}
               disabled={currentPage === totalPages}
             >
               Next
