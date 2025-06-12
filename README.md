@@ -6,12 +6,8 @@ A modern and luxurious e-commerce platform built with cutting-edge technologies 
 
 - Modern and intuitive user interface
 - Responsive design for all devices
-- Real-time product updates
-- Secure payment processing
-- User authentication and authorization
-- Shopping cart functionality
 - Product search and filtering
-- Order tracking
+
 
 ## 🚀 Technologies Used
 
