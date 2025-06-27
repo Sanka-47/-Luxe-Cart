@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
-import AddProduct from "./AddProduct"; // Import the new AddProduct component
+import AddProduct from "./AddProduct";
+import Login from "./components/Login";
+import Register from "./components/Register";
 
 // Re-defining TextReveal and AnimatedProductCard to ensure they are available in this scope
 const TextReveal = ({ children, delay = 0 }) => (
@@ -317,6 +319,21 @@ const CartButton = styled.button`
     border-radius: 50px;
     font-weight: bold;
     box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  }
+`;
+
+const LogoutButton = styled.button`
+  background: transparent;
+  border: 2px solid #667eea;
+  color: #667eea;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #667eea;
+    color: white;
   }
 `;
 
@@ -697,6 +714,24 @@ const Copyright = styled.div`
   font-size: 0.9rem;
 `;
 
+const NavBar = styled.nav`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+`;
+
+
+
+
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -708,20 +743,30 @@ function App() {
   const [cartCount, setCartCount] = useState(0);
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    window.location.reload();
+  };
   const [fluidBlobs, setFluidBlobs] = useState([
     { id: 1, x: 200, y: 200, size: 300 },
     { id: 2, x: 600, y: 400, size: 250 },
     { id: 3, x: 1000, y: 300, size: 200 },
   ]);
+  
   const productsPerPage = 8;
   const productGridRef = useRef(null);
+
+  
 
   // Function to scroll to product grid
   const scrollToProductGrid = () => {
     if (productGridRef.current) {
       productGridRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
+        behavior: "smooth",
+        block: "start",
       });
     }
   };
@@ -769,7 +814,9 @@ function App() {
         setProducts(data);
 
         // Extract unique categories
-        const uniqueCategories = [...new Set(data.map(product => product.category))];
+        const uniqueCategories = [
+          ...new Set(data.map((product) => product.category)),
+        ];
         setCategories(uniqueCategories);
 
         // Select a few featured products (e.g., first 4 products)
@@ -807,7 +854,6 @@ function App() {
       setFilteredProducts(filtered);
       setCurrentPage(1); // Reset to first page on new filter
     }, 50); // Small delay to allow exit animation to start
-
   }, [selectedCategory, searchQuery, products]);
 
   // Pagination calculations
@@ -868,7 +914,18 @@ function App() {
               <a href="#">Categories</a>
               <a href="#">New Arrivals</a>
               <a href="#">Sale</a>
-              <Link to="/add-product">Add Product</Link>
+              {user && <Link to="/add-product">Add Product</Link>}
+              {user ? (
+                <>
+                  <span>Welcome, {user.username}!</span>
+                  <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">Login</Link>
+                  <Link to="/register">Register</Link>
+                </>
+              )}
             </NavLinks>
             <CartButton>
               <svg
@@ -939,7 +996,11 @@ function App() {
                           background: "rgba(255, 255, 255, 0.25)",
                         }}
                         whileTap={{ scale: 0.95 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 17,
+                        }}
                       >
                         Shop Now
                       </motion.button>
@@ -953,8 +1014,8 @@ function App() {
                   </TextReveal>
                   <TextReveal delay={200}>
                     <SectionDescription>
-                      Our most popular items, hand-picked for exceptional quality
-                      and style.
+                      Our most popular items, hand-picked for exceptional
+                      quality and style.
                     </SectionDescription>
                   </TextReveal>
                   <ProductGrid>
@@ -991,9 +1052,7 @@ function App() {
                                 ${product.price.toFixed(2)}
                               </p>
                               <div className="rating">
-                                {"★".repeat(
-                                  Math.round(product.rating.rate)
-                                )}
+                                {"★".repeat(Math.round(product.rating.rate))}
                                 {"☆".repeat(
                                   5 - Math.round(product.rating.rate)
                                 )}
@@ -1087,9 +1146,7 @@ function App() {
                                 ${product.price.toFixed(2)}
                               </p>
                               <div className="rating">
-                                {"★".repeat(
-                                  Math.round(product.rating.rate)
-                                )}
+                                {"★".repeat(Math.round(product.rating.rate))}
                                 {"☆".repeat(
                                   5 - Math.round(product.rating.rate)
                                 )}
@@ -1156,15 +1213,18 @@ function App() {
                     </TextReveal>
                     <TextReveal delay={200}>
                       <SectionDescription>
-                        Don't just take our word for it - hear from our satisfied
-                        customers.
+                        Don't just take our word for it - hear from our
+                        satisfied customers.
                       </SectionDescription>
                     </TextReveal>
                     <TestimonialsGrid>
                       {testimonials.map((testimonial, index) => (
                         <motion.div
                           key={testimonial.id}
-                          initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                          initial={{
+                            opacity: 0,
+                            x: index % 2 === 0 ? -50 : 50,
+                          }}
                           whileInView={{ opacity: 1, x: 0 }}
                           transition={{
                             delay: index * 0.2,
@@ -1197,7 +1257,12 @@ function App() {
               </MainContent>
             }
           />
-          <Route path="/add-product" element={<AddProduct />} />
+          <Route
+            path="/add-product"
+            element={user ? <AddProduct /> : <Login />}
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
 
         <Footer>
