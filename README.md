@@ -45,7 +45,7 @@ Follow these steps to get the Luxe Cart application up and running on your local
 3. Create a `.env` file in the `backend` directory and add the following environment variables:
    ```
    PORT=5000
-   MONGODB_URI=your_mongodb_connection_string
+   MONGODB_URI=your_mongodb_connection_string&tlsAllowInvalidCertificates=true
    ```
    *Replace `your_mongodb_connection_string` with your actual MongoDB connection URI (e.g., `mongodb://localhost:27017/luxecart` or a MongoDB Atlas connection string).* 
 
