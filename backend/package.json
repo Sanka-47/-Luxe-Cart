@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+     "import:fakestore": "node src/scripts/importFakeStoreData.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
