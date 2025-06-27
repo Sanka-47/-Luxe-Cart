@@ -1,3 +1,4 @@
+
 # Luxe Cart E-commerce Application
 
 Luxe Cart is a full-stack e-commerce application designed to provide a seamless shopping experience. It features user authentication, product management, and a responsive user interface.
@@ -103,3 +104,4 @@ After running the `import:fakestore` script, you can log in with the following u
 ## Running the Application
 
 Once both the backend and frontend servers are running, open your web browser and navigate to `http://localhost:5173` to access the application. You can log in with the predefined user credentials or register a new account.
+
