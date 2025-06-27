@@ -4,23 +4,25 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const RegisterContainer = styled.div`
-  padding: 40px;
-  max-width: 400px;
-  margin: 80px auto 40px auto;
+  padding: 60px 80px;
+  max-width: 600px;
+  width: 90%;
+  margin: 60px auto;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 25px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   font-family: "Poppins", sans-serif;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  min-height: 500px;
 `;
 
 const Title = styled.h2`
-  font-size: 2.5em;
+  font-size: 3em;
   background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 30px;
+  margin-bottom: 50px;
   text-align: center;
   font-weight: 700;
 `;
@@ -28,7 +30,7 @@ const Title = styled.h2`
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 35px;
 `;
 
 const FormGroup = styled.div`
@@ -37,20 +39,21 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-  margin-bottom: 8px;
-  font-size: 1.1em;
+  margin-bottom: 12px;
+  font-size: 1.3em;
   color: #1a1a1a;
   font-weight: 600;
 `;
 
 const Input = styled.input`
-  padding: 12px 15px;
+  padding: 18px 20px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 15px;
-  font-size: 1em;
+  font-size: 1.1em;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: rgba(255, 255, 255, 0.8);
   color: #000;
+  min-height: 50px;
 
   &:focus {
     border-color: #007bff;
@@ -61,16 +64,18 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
-  padding: 15px 25px;
+  padding: 20px 35px;
   background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;
   border: none;
   border-radius: 15px;
-  font-size: 1.2em;
+  font-size: 1.3em;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+  margin-top: 20px;
+  min-height: 60px;
 
   &:hover {
     transform: translateY(-2px);
@@ -85,8 +90,12 @@ const Button = styled.button`
 
 const ErrorMessage = styled.div`
   color: #dc3545;
-  font-size: 0.9em;
-  margin-top: 5px;
+  font-size: 1em;
+  margin-top: 8px;
+  padding: 10px;
+  background: rgba(220, 53, 69, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #dc3545;
 `;
 
 const Register = () => {
@@ -138,6 +147,7 @@ const Register = () => {
             value={formData.username}
             onChange={handleChange}
             required
+            placeholder="Enter your username"
           />
         </FormGroup>
         <FormGroup>
@@ -149,6 +159,7 @@ const Register = () => {
             value={formData.email}
             onChange={handleChange}
             required
+            placeholder="Enter your email"
           />
         </FormGroup>
         <FormGroup>
@@ -160,6 +171,7 @@ const Register = () => {
             value={formData.password}
             onChange={handleChange}
             required
+            placeholder="Enter your password"
           />
         </FormGroup>
         {error && <ErrorMessage>{error}</ErrorMessage>}

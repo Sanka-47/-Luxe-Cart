@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
 import AddProduct from "./AddProduct";
-import Login from "./components/Login";
-import Register from "./components/Register";
+import Login from "./Login";
+import Register from "./Register";
 import ManageProducts from "./ManageProducts";
 import EditProduct from "./EditProduct";
 
@@ -731,10 +731,6 @@ const NavBar = styled.nav`
   z-index: 1000;
 `;
 
-
-
-
-
 function App() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -757,11 +753,9 @@ function App() {
     { id: 2, x: 600, y: 400, size: 250 },
     { id: 3, x: 1000, y: 300, size: 200 },
   ]);
-  
+
   const productsPerPage = 8;
   const productGridRef = useRef(null);
-
-  
 
   // Function to scroll to product grid
   const scrollToProductGrid = () => {

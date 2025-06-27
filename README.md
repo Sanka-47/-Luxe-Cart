@@ -1,79 +1,105 @@
-# Luxe-Cart 🛍️
+# Luxe Cart E-commerce Application
 
-A modern and luxurious e-commerce platform built with cutting-edge technologies to provide an exceptional shopping experience.
+Luxe Cart is a full-stack e-commerce application designed to provide a seamless shopping experience. It features user authentication, product management, and a responsive user interface.
 
-## 🌟 Features
+## Technologies Used
 
-- Modern and intuitive user interface
-- Responsive design for all devices
-- Real-time product updates
-- Secure payment processing
-- User authentication and authorization
-- Shopping cart functionality
-- Product search and filtering
-- Order tracking
+This project leverages a modern tech stack for both its frontend and backend:
 
-## 🚀 Technologies Used
+### Backend
+- **Node.js**: JavaScript runtime environment.
+- **Express.js**: Web application framework for Node.js.
+- **MongoDB**: NoSQL database for storing application data.
+- **Mongoose**: ODM (Object Data Modeling) library for MongoDB and Node.js.
+- **bcryptjs**: Library for hashing passwords.
+- **CORS**: Middleware for enabling Cross-Origin Resource Sharing.
+- **dotenv**: Module to load environment variables from a `.env` file.
+- **Nodemon**: Utility that monitors for changes in your source and automatically restarts your server.
 
-- React.js
-- Vite
-- CSS
-- JavaScript
+### Frontend
+- **React**: JavaScript library for building user interfaces.
+- **Vite**: Next-generation frontend tooling for fast development.
+- **React Router DOM**: Declarative routing for React.
+- **Axios**: Promise-based HTTP client for making API requests.
+- **Styled-components**: Visual primitives for the component age.
 
-## 📋 Prerequisites
+## Setup and Installation
 
-Before you begin, ensure you have the following installed:
-- Node.js (14.x or higher)
-- npm (6.x or higher)
+Follow these steps to get the Luxe Cart application up and running on your local machine.
 
-## 🛠️ Installation
+### Prerequisites
+- Node.js (v14 or higher)
+- npm (v6 or higher) or Yarn
+- MongoDB instance (local or cloud-hosted)
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/Luxe-Cart.git
-```
+### Backend Setup
+1. Navigate to the `backend` directory:
+   ```bash
+   cd backend
+   ```
+2. Install backend dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in the `backend` directory and add the following environment variables:
+   ```
+   PORT=5000
+   MONGODB_URI=your_mongodb_connection_string
+   ```
+   *Replace `your_mongodb_connection_string` with your actual MongoDB connection URI (e.g., `mongodb://localhost:27017/luxecart` or a MongoDB Atlas connection string).* 
 
-2. Navigate to the project directory:
-```bash
-cd Luxe-Cart
-```
+4. Start the backend server:
+   ```bash
+   npm run dev
+   ```
+   The backend server will run on `http://localhost:5000`.
 
-3. Install dependencies:
-```bash
-npm install
-```
+### Frontend Setup
+1. Navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+2. Install frontend dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the frontend development server:
+   ```bash
+   npm run dev
+   ```
+   The frontend application will be accessible at `http://localhost:5173`.
 
-4. Start the development server:
-```bash
-npm run dev
-```
+## Importing Sample Data
 
-## 🔧 Usage
+To populate your database with sample users and products from FakeStoreAPI, run the `importFakeStoreData.js` script.
 
-After starting the development server, open your browser and navigate to `http://localhost:5173` to view the application.
+1. Ensure your backend server is **not** running.
+2. Navigate to the `backend` directory:
+   ```bash
+   cd backend
+   ```
+3. Run the import script:
+   ```bash
+   npm run import:fakestore
+   ```
+   This script will add three predefined users and products from FakeStoreAPI to your MongoDB database.
 
-## 🤝 Contributing
+### Predefined User Credentials
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+After running the `import:fakestore` script, you can log in with the following user accounts:
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- **User 1 (Admin):**
+  - Email: `kalindu47kk@gmail.com`
+  - Password: `12345678`
 
-## 📝 License
+- **User 2:**
+  - Email: `sanka@gmail.com`
+  - Password: `12345678`
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **User 3:**
+  - Email: `kavisha@gmail.com`
+  - Password: `12345678`
 
-## 📞 Contact
+## Running the Application
 
-Your Name - [@yourusername](https://github.com/yourusername)
-
-Project Link: [https://github.com/yourusername/Luxe-Cart](https://github.com/yourusername/Luxe-Cart)
-
-## 🙏 Acknowledgments
-
-- React.js Documentation
-- Vite Documentation
-- Open source community
+Once both the backend and frontend servers are running, open your web browser and navigate to `http://localhost:5173` to access the application. You can log in with the predefined user credentials or register a new account.
