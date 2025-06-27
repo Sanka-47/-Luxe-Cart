@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import styled from "@emotion/styled";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import styled from "styled-components";
+import AddProduct from "./AddProduct"; // Import the new AddProduct component
 
+// Re-defining TextReveal and AnimatedProductCard to ensure they are available in this scope
 const TextReveal = ({ children, delay = 0 }) => (
   <div style={{ overflow: "hidden" }}>
     <motion.div
@@ -13,7 +16,6 @@ const TextReveal = ({ children, delay = 0 }) => (
     </motion.div>
   </div>
 );
-
 
 const AnimatedProductCard = styled(motion.div)`
   background: rgba(255, 255, 255, 0.9);
@@ -31,8 +33,8 @@ const AnimatedProductCard = styled(motion.div)`
     opacity: 0;
     transform: translateY(15px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), cursor 0.08s ease-out;
-     will-change: cursor, transform;
-     transform: translateZ(0);
+    will-change: cursor, transform;
+    transform: translateZ(0);
     padding: 0 1.5rem 1.5rem;
   }
 
@@ -150,8 +152,8 @@ const AnimatedProductCard = styled(motion.div)`
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), cursor 0.08s ease-out;
-     will-change: cursor, transform;
-     transform: translateZ(0);
+    will-change: cursor, transform;
+    transform: translateZ(0);
     font-size: 0.9rem;
 
     &.add-to-cart {
@@ -177,8 +179,6 @@ const AnimatedProductCard = styled(motion.div)`
     }
   }
 `;
-
-
 
 const FluidBackground = styled.div`
   position: fixed;
@@ -393,9 +393,9 @@ const HeroContent = styled.div`
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1), cursor 0.08s ease-out;
-     will-change: cursor, transform;
-     transform: translateZ(0);
-     backdrop-filter: blur(10px);
+    will-change: cursor, transform;
+    transform: translateZ(0);
+    backdrop-filter: blur(10px);
     letter-spacing: 0.5px;
   }
 `;
@@ -762,22 +762,24 @@ function App() {
 
   // Fetch products from API on initial render
   useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("/api/products"); // Changed to backend API endpoint
+        const data = await response.json();
         setProducts(data);
-        setFilteredProducts(data);
 
-        // Set featured products (e.g., top 4 highest rated)
-        const sorted = [...data].sort((a, b) => b.rating.rate - a.rating.rate);
-        setFeaturedProducts(sorted.slice(0, 4));
-
-        // Get unique categories for filter buttons
-        const uniqueCategories = [
-          ...new Set(data.map((product) => product.category)),
-        ];
+        // Extract unique categories
+        const uniqueCategories = [...new Set(data.map(product => product.category))];
         setCategories(uniqueCategories);
-      });
+
+        // Select a few featured products (e.g., first 4 products)
+        setFeaturedProducts(data.slice(0, 4));
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   // Effect to filter products when category, search, or product list changes
@@ -794,13 +796,18 @@ function App() {
       const lowercasedQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (product) =>
-          product.title.toLowerCase().includes(lowercasedQuery) ||
+          product.name.toLowerCase().includes(lowercasedQuery) ||
           product.description.toLowerCase().includes(lowercasedQuery)
       );
     }
 
-    setFilteredProducts(filtered);
-    setCurrentPage(1); // Reset to first page on new filter
+    // Force AnimatePresence to re-render by clearing and then setting products
+    setFilteredProducts([]); // Clear products to trigger exit animation
+    setTimeout(() => {
+      setFilteredProducts(filtered);
+      setCurrentPage(1); // Reset to first page on new filter
+    }, 50); // Small delay to allow exit animation to start
+
   }, [selectedCategory, searchQuery, products]);
 
   // Pagination calculations
@@ -819,7 +826,7 @@ function App() {
 
   const handleAddToCart = (product) => {
     // In a real app, you'd add the product to a cart state array
-    console.log("Added to cart:", product.title);
+    console.log("Added to cart:", product.name); // Changed product.title to product.name for consistency
     setCartCount((prev) => prev + 1);
   };
 
@@ -849,406 +856,429 @@ function App() {
   ];
 
   return (
-    <Container>
-      <Navbar>
-        <NavContent>
-          <Logo>
-            Luxe<span>Cart</span>
-          </Logo>
-          <NavLinks>
-            <a href="#">Home</a>
-            <a href="#">Categories</a>
-            <a href="#">New Arrivals</a>
-            <a href="#">Sale</a>
-          </NavLinks>
-          <CartButton>
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-            {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
-          </CartButton>
-        </NavContent>
-      </Navbar>
-
-      <FluidBackground>
-        {fluidBlobs.map((blob) => (
-          <FluidBlob
-            key={blob.id}
-            animate={{
-              x: blob.x - blob.size / 2,
-              y: blob.y - blob.size / 2,
-            }}
-            transition={{
-              type: "spring",
-              stiffness: 50,
-              damping: 20,
-              mass: 1,
-            }}
-            style={{
-              width: blob.size,
-              height: blob.size,
-            }}
-          />
-        ))}
-      </FluidBackground>
-
-      <MainContent>
-        <HeroSection>
-          <HeroContent>
-           
-            <TextReveal>
-              <h1>Discover Luxury at Your Fingertips</h1>
-            </TextReveal>
-            <TextReveal delay={200}>
-              <p>
-                Premium products curated for the discerning customer. Explore our
-                exclusive collection today.
-              </p>
-            </TextReveal>
-            <TextReveal delay={400}>
-   
-              <motion.button
-                whileHover={{
-                  scale: 1.05,
-                  y: -3,
-                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-                  borderColor: "rgba(255, 255, 255, 0.5)",
-                  background: "rgba(255, 255, 255, 0.25)"
-                }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+    <Router>
+      <Container>
+        <Navbar>
+          <NavContent>
+            <Logo>
+              Luxe<span>Cart</span>
+            </Logo>
+            <NavLinks>
+              <Link to="/">Home</Link>
+              <a href="#">Categories</a>
+              <a href="#">New Arrivals</a>
+              <a href="#">Sale</a>
+              <Link to="/add-product">Add Product</Link>
+            </NavLinks>
+            <CartButton>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                Shop Now
-              </motion.button>
-            </TextReveal>
-          </HeroContent>
-        </HeroSection>
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+            </CartButton>
+          </NavContent>
+        </Navbar>
 
-        <SectionContainer>
-          <TextReveal>
-            <SectionTitle>Featured Products</SectionTitle>
-          </TextReveal>
-          <TextReveal delay={200}>
-            <SectionDescription>
-              Our most popular items, hand-picked for exceptional quality and
-              style.
-            </SectionDescription>
-          </TextReveal>
-          <ProductGrid>
-            <AnimatePresence>
-              {featuredProducts.map((product, index) => (
-           
-                <AnimatedProductCard
-                  key={`featured-${product.id}`}
-                  layout
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                  transition={{
-                    delay: index * 0.1,
-                    duration: 0.6,
-                    type: "spring",
-                    stiffness: 100,
-                    damping: 15,
-                  }}
-                  whileHover={{
-                    y: -8,
-                    scale: 1.02,
-                    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.12)",
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  <div className="badge">Featured</div>
-                  <div className="image-container">
-                    <img src={product.image} alt={product.title} />
-                  </div>
-                  <div className="content">
-                    <h3>{product.title}</h3>
-                    <div className="price-row">
-                      <p className="price">${product.price.toFixed(2)}</p>
-                      <div className="rating">
-                        {"★".repeat(Math.round(product.rating.rate))}
-                        {"☆".repeat(5 - Math.round(product.rating.rate))}
-                        <span>({product.rating.count})</span>
-                      </div>
-                    </div>
-                    <p className="description">{product.description}</p>
-                    <div className="card-actions">
-                      <button
-                        className="add-to-cart"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(product);
-                        }}
-                      >
-                        Add to Cart
-                      </button>
-                      <button className="wishlist">♡</button>
-                    </div>
-                  </div>
-                </AnimatedProductCard>
-              ))}
-            </AnimatePresence>
-          </ProductGrid>
-        </SectionContainer>
-
-        <SectionContainer>
-          <SectionTitle>Our Collection</SectionTitle>
-          <SectionDescription>
-            Browse our extensive catalog of premium products, with new items
-            added weekly.
-          </SectionDescription>
-
-          <SearchBar>
-            <input
-              type="text"
-              placeholder="Search our premium collection..."
-              value={searchQuery}
-              onChange={handleSearch}
+        <FluidBackground>
+          {fluidBlobs.map((blob) => (
+            <FluidBlob
+              key={blob.id}
+              animate={{
+                x: blob.x - blob.size / 2,
+                y: blob.y - blob.size / 2,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 50,
+                damping: 20,
+                mass: 1,
+              }}
+              style={{
+                width: blob.size,
+                height: blob.size,
+                filter: `blur(${blob.size / 5}px)`,
+              }}
             />
-          </SearchBar>
+          ))}
+        </FluidBackground>
 
-          <CategoryFilter>
-            <FilterButton
-              active={selectedCategory === "all"}
-              onClick={() => setSelectedCategory("all")}
-            >
-              All
-            </FilterButton>
-            {categories.map((category) => (
-              <FilterButton
-                key={category}
-                active={selectedCategory === category}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category.charAt(0).toUpperCase() + category.slice(1)}
-              </FilterButton>
-            ))}
-          </CategoryFilter>
-
-          <ProductGrid ref={productGridRef}>
-            <AnimatePresence>
-              {currentProducts.map((product, index) => (
-              
-                <AnimatedProductCard
-                  key={product.id}
-                  layout
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                  transition={{
-                    delay: index * 0.1,
-                    duration: 0.6,
-                    type: "spring",
-                    stiffness: 100,
-                    damping: 15,
-                  }}
-                   whileHover={{
-                    y: -8,
-                    scale: 1.02,
-                    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.12)",
-                    transition: { duration: 0.2 },
-                  }}
-                >
-                  <div className="image-container">
-                    <img src={product.image} alt={product.title} />
-                  </div>
-                  <div className="content">
-                    <h3>{product.title}</h3>
-                    <div className="price-row">
-                      <p className="price">${product.price.toFixed(2)}</p>
-                      <div className="rating">
-                        {"★".repeat(Math.round(product.rating.rate))}
-                        {"☆".repeat(5 - Math.round(product.rating.rate))}
-                        <span>({product.rating.count})</span>
-                      </div>
-                    </div>
-                    <p className="description">{product.description}</p>
-                    <div className="card-actions">
-                      <button
-                        className="add-to-cart"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleAddToCart(product);
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <MainContent>
+                <HeroSection>
+                  <HeroContent>
+                    <TextReveal>
+                      <h1>Discover Luxury at Your Fingertips</h1>
+                    </TextReveal>
+                    <TextReveal delay={200}>
+                      <p>
+                        Premium products curated for the discerning customer.
+                        Explore our exclusive collection today.
+                      </p>
+                    </TextReveal>
+                    <TextReveal delay={400}>
+                      <motion.button
+                        whileHover={{
+                          scale: 1.05,
+                          y: -3,
+                          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                          borderColor: "rgba(255, 255, 255, 0.5)",
+                          background: "rgba(255, 255, 255, 0.25)",
                         }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
                       >
-                        Add to Cart
+                        Shop Now
+                      </motion.button>
+                    </TextReveal>
+                  </HeroContent>
+                </HeroSection>
+
+                <SectionContainer>
+                  <TextReveal>
+                    <SectionTitle>Featured Products</SectionTitle>
+                  </TextReveal>
+                  <TextReveal delay={200}>
+                    <SectionDescription>
+                      Our most popular items, hand-picked for exceptional quality
+                      and style.
+                    </SectionDescription>
+                  </TextReveal>
+                  <ProductGrid>
+                    <AnimatePresence>
+                      {featuredProducts.map((product, index) => (
+                        <AnimatedProductCard
+                          key={`featured-${product.id}`}
+                          layout
+                          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                          transition={{
+                            delay: index * 0.1,
+                            duration: 0.6,
+                            type: "spring",
+                            stiffness: 100,
+                            damping: 15,
+                          }}
+                          whileHover={{
+                            y: -8,
+                            scale: 1.02,
+                            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.12)",
+                            transition: { duration: 0.2 },
+                          }}
+                        >
+                          <div className="badge">Featured</div>
+                          <div className="image-container">
+                            <img src={product.image} alt={product.name} />
+                          </div>
+                          <div className="content">
+                            <h3>{product.name}</h3>
+                            <div className="price-row">
+                              <p className="price">
+                                ${product.price.toFixed(2)}
+                              </p>
+                              <div className="rating">
+                                {"★".repeat(
+                                  Math.round(product.rating.rate)
+                                )}
+                                {"☆".repeat(
+                                  5 - Math.round(product.rating.rate)
+                                )}
+                                <span>({product.rating.count})</span>
+                              </div>
+                            </div>
+                            <p className="description">{product.description}</p>
+                            <div className="card-actions">
+                              <button
+                                className="add-to-cart"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddToCart(product);
+                                }}
+                              >
+                                Add to Cart
+                              </button>
+                              <button className="wishlist">♡</button>
+                            </div>
+                          </div>
+                        </AnimatedProductCard>
+                      ))}
+                    </AnimatePresence>
+                  </ProductGrid>
+                </SectionContainer>
+
+                <SectionContainer>
+                  <SectionTitle>Our Collection</SectionTitle>
+                  <SectionDescription>
+                    Browse our extensive catalog of premium products, with new
+                    items added weekly.
+                  </SectionDescription>
+
+                  <SearchBar>
+                    <input
+                      type="text"
+                      placeholder="Search our premium collection..."
+                      value={searchQuery}
+                      onChange={handleSearch}
+                    />
+                  </SearchBar>
+
+                  <CategoryFilter>
+                    <FilterButton
+                      active={selectedCategory === "all"}
+                      onClick={() => setSelectedCategory("all")}
+                    >
+                      All
+                    </FilterButton>
+                    {categories.map((category) => (
+                      <FilterButton
+                        key={category}
+                        active={selectedCategory === category}
+                        onClick={() => setSelectedCategory(category)}
+                      >
+                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                      </FilterButton>
+                    ))}
+                  </CategoryFilter>
+
+                  <ProductGrid ref={productGridRef}>
+                    <AnimatePresence key={`${selectedCategory}-${searchQuery}`}>
+                      {currentProducts.map((product, index) => (
+                        <AnimatedProductCard
+                          key={product.id}
+                          layout
+                          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                          transition={{
+                            delay: index * 0.1,
+                            duration: 0.6,
+                            type: "spring",
+                            stiffness: 100,
+                            damping: 15,
+                          }}
+                          whileHover={{
+                            y: -8,
+                            scale: 1.02,
+                            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.12)",
+                            transition: { duration: 0.2 },
+                          }}
+                        >
+                          <div className="image-container">
+                            <img src={product.image} alt={product.name} />
+                          </div>
+                          <div className="content">
+                            <h3>{product.name}</h3>
+                            <div className="price-row">
+                              <p className="price">
+                                ${product.price.toFixed(2)}
+                              </p>
+                              <div className="rating">
+                                {"★".repeat(
+                                  Math.round(product.rating.rate)
+                                )}
+                                {"☆".repeat(
+                                  5 - Math.round(product.rating.rate)
+                                )}
+                                <span>({product.rating.count})</span>
+                              </div>
+                            </div>
+                            <p className="description">{product.description}</p>
+                            <div className="card-actions">
+                              <button
+                                className="add-to-cart"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAddToCart(product);
+                                }}
+                              >
+                                Add to Cart
+                              </button>
+                              <button className="wishlist">♡</button>
+                            </div>
+                          </div>
+                        </AnimatedProductCard>
+                      ))}
+                    </AnimatePresence>
+                  </ProductGrid>
+
+                  <Pagination>
+                    <button
+                      onClick={() => {
+                        setCurrentPage((p) => p - 1);
+                        scrollToProductGrid();
+                      }}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </button>
+                    {[...Array(totalPages)].map((_, index) => (
+                      <button
+                        key={index + 1}
+                        onClick={() => {
+                          setCurrentPage(index + 1);
+                          scrollToProductGrid();
+                        }}
+                        className={currentPage === index + 1 ? "active" : ""}
+                      >
+                        {index + 1}
                       </button>
-                      <button className="wishlist">♡</button>
-                    </div>
-                  </div>
-                </AnimatedProductCard>
-              ))}
-            </AnimatePresence>
-          </ProductGrid>
+                    ))}
+                    <button
+                      onClick={() => {
+                        setCurrentPage((p) => p + 1);
+                        scrollToProductGrid();
+                      }}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </button>
+                  </Pagination>
+                </SectionContainer>
 
-          <Pagination>
-            <button
-              onClick={() => {
-                setCurrentPage((p) => p - 1);
-                scrollToProductGrid();
-              }}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            {[...Array(totalPages)].map((_, index) => (
-              <button
-                key={index + 1}
-                onClick={() => {
-                  setCurrentPage(index + 1);
-                  scrollToProductGrid();
-                }}
-                className={currentPage === index + 1 ? "active" : ""}
-              >
-                {index + 1}
-              </button>
-            ))}
-            <button
-              onClick={() => {
-                setCurrentPage((p) => p + 1);
-                scrollToProductGrid();
-              }}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </Pagination>
-        </SectionContainer>
+                <TestimonialsSection>
+                  <SectionContainer>
+                    <TextReveal>
+                      <SectionTitle>What Our Customers Say</SectionTitle>
+                    </TextReveal>
+                    <TextReveal delay={200}>
+                      <SectionDescription>
+                        Don't just take our word for it - hear from our satisfied
+                        customers.
+                      </SectionDescription>
+                    </TextReveal>
+                    <TestimonialsGrid>
+                      {testimonials.map((testimonial, index) => (
+                        <motion.div
+                          key={testimonial.id}
+                          initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{
+                            delay: index * 0.2,
+                            duration: 0.6,
+                            type: "spring",
+                            stiffness: 100,
+                            damping: 15,
+                          }}
+                          viewport={{ once: true, margin: "-100px" }}
+                        >
+                          <TestimonialCard>
+                            <div className="quote">“</div>
+                            <p>{testimonial.text}</p>
+                            <div className="author">
+                              <img
+                                src={testimonial.avatar}
+                                alt={testimonial.name}
+                              />
+                              <div className="author-info">
+                                <h4>{testimonial.name}</h4>
+                                <span>{testimonial.title}</span>
+                              </div>
+                            </div>
+                          </TestimonialCard>
+                        </motion.div>
+                      ))}
+                    </TestimonialsGrid>
+                  </SectionContainer>
+                </TestimonialsSection>
+              </MainContent>
+            }
+          />
+          <Route path="/add-product" element={<AddProduct />} />
+        </Routes>
 
-        <TestimonialsSection>
-          <SectionContainer>
-            <TextReveal>
-              <SectionTitle>What Our Customers Say</SectionTitle>
-            </TextReveal>
-            <TextReveal delay={200}>
-              <SectionDescription>
-                Don't just take our word for it - hear from our satisfied
-                customers.
-              </SectionDescription>
-            </TextReveal>
-            <TestimonialsGrid>
-              {testimonials.map((testimonial, index) => (
-             
-                <motion.div
-                  key={testimonial.id}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{
-                    delay: index * 0.2,
-                    duration: 0.6,
-                    type: "spring",
-                    stiffness: 100,
-                  }}
-                  viewport={{ once: true, margin: "-100px" }}
-                >
-                  <TestimonialCard>
-                    <div className="quote">“</div>
-                    <p>{testimonial.text}</p>
-                    <div className="author">
-                      <img src={testimonial.avatar} alt={testimonial.name} />
-                      <div className="author-info">
-                        <h4>{testimonial.name}</h4>
-                        <span>{testimonial.title}</span>
-                      </div>
-                    </div>
-                  </TestimonialCard>
-                </motion.div>
-              ))}
-            </TestimonialsGrid>
-          </SectionContainer>
-        </TestimonialsSection>
-      </MainContent>
-
-      <Footer>
-        <FooterContent>
-          <div>
-            <h3>About LuxeCart</h3>
-            <ul>
-              <li>
-                <a href="#">Our Story</a>
-              </li>
-              <li>
-                <a href="#">Careers</a>
-              </li>
-              <li>
-                <a href="#">Press & Media</a>
-              </li>
-              <li>
-                <a href="#">Sustainability</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3>Customer Service</h3>
-            <ul>
-              <li>
-                <a href="#">Contact Us</a>
-              </li>
-              <li>
-                <a href="#">Shipping Info</a>
-              </li>
-              <li>
-                <a href="#">Returns & Exchanges</a>
-              </li>
-              <li>
-                <a href="#">FAQ</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3>Connect With Us</h3>
-            <ul>
-              <li>
-                <a href="#">Instagram</a>
-              </li>
-              <li>
-                <a href="#">Facebook</a>
-              </li>
-              <li>
-                <a href="#">Twitter</a>
-              </li>
-              <li>
-                <a href="#">Pinterest</a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3>Payment Methods</h3>
-            <ul>
-              <li>
-                <a href="#">Credit Cards</a>
-              </li>
-              <li>
-                <a href="#">PayPal</a>
-              </li>
-              <li>
-                <a href="#">Apple Pay</a>
-              </li>
-              <li>
-                <a href="#">Google Pay</a>
-              </li>
-            </ul>
-          </div>
-        </FooterContent>
-        <Copyright>
-          <p>
-            &copy; {new Date().getFullYear()} LuxeCart. All rights reserved.
-          </p>
-        </Copyright>
-      </Footer>
-    </Container>
+        <Footer>
+          <FooterContent>
+            <div>
+              <h3>About LuxeCart</h3>
+              <ul>
+                <li>
+                  <a href="#">Our Story</a>
+                </li>
+                <li>
+                  <a href="#">Careers</a>
+                </li>
+                <li>
+                  <a href="#">Press & Media</a>
+                </li>
+                <li>
+                  <a href="#">Sustainability</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3>Customer Service</h3>
+              <ul>
+                <li>
+                  <a href="#">Contact Us</a>
+                </li>
+                <li>
+                  <a href="#">Shipping Info</a>
+                </li>
+                <li>
+                  <a href="#">Returns & Exchanges</a>
+                </li>
+                <li>
+                  <a href="#">FAQ</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3>Connect With Us</h3>
+              <ul>
+                <li>
+                  <a href="#">Instagram</a>
+                </li>
+                <li>
+                  <a href="#">Facebook</a>
+                </li>
+                <li>
+                  <a href="#">Twitter</a>
+                </li>
+                <li>
+                  <a href="#">Pinterest</a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3>Payment Methods</h3>
+              <ul>
+                <li>
+                  <a href="#">Credit Cards</a>
+                </li>
+                <li>
+                  <a href="#">PayPal</a>
+                </li>
+                <li>
+                  <a href="#">Apple Pay</a>
+                </li>
+                <li>
+                  <a href="#">Google Pay</a>
+                </li>
+              </ul>
+            </div>
+          </FooterContent>
+          <Copyright>
+            <p>
+              &copy; {new Date().getFullYear()} LuxeCart. All rights reserved.
+            </p>
+          </Copyright>
+        </Footer>
+      </Container>
+    </Router>
   );
 }
 
