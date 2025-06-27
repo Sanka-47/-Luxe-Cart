@@ -64,7 +64,13 @@ Follow these steps to get the Luxe Cart application up and running on your local
    ```bash
    npm install
    ```
-3. Start the frontend development server:
+3. Install Framer motion
+
+ ```bash
+  npm install framer-motion
+   ```
+ 
+4. Start the frontend development server:
    ```bash
    npm run dev
    ```
