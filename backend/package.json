@@ -6,9 +6,10 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-     "import:fakestore": "node src/scripts/importFakeStoreData.js"
+    "import:fakestore": "node src/scripts/importFakeStoreData.js"
   },
   "dependencies": {
+    "axios": "^1.10.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
