@@ -134,7 +134,7 @@ const AddProduct = () => {
     name: '',
     price: '',
     description: '',
-    category: 'Men\'s clothing',
+    category: 'men\'s clothing',
     image: '',
     quantity: 1,
     rating: {
@@ -154,6 +154,12 @@ const AddProduct = () => {
           [name]: Number(value)
         }
       }));
+    } else if (name === 'category') {
+      // Ensure category is sent exactly as selected
+      setProduct(prevProduct => ({
+        ...prevProduct,
+        category: value
+      }));
     } else {
       setProduct(prevProduct => ({
         ...prevProduct,
@@ -168,6 +174,7 @@ const AddProduct = () => {
       await axios.post('http://localhost:5000/api/products', product);
       alert('Product added successfully!');
       navigate('/');
+      window.location.reload(); // Reload the page to reflect changes in App.jsx
     } catch (error) {
       console.error('Error adding product:', error);
       alert('Failed to add product.');
@@ -232,10 +239,10 @@ const AddProduct = () => {
             onChange={handleChange}
             required
           >
-            <option value="Men's clothing">Men's clothing</option>
-            <option value="Jewelery">Jewelery</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Women's clothing">Women's clothing</option>
+            <option value="men's clothing">Men's clothing</option>
+            <option value="jewelery">Jewelery</option>
+            <option value="electronics">Electronics</option>
+            <option value="women's clothing">Women's clothing</option>
           </Select>
         </FormGroup>
         <FormGroup>
