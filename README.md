@@ -55,23 +55,7 @@ Follow these steps to get the Luxe Cart application up and running on your local
    ```
    The backend server will run on `http://localhost:5000`.
 
-### Frontend Setup
-1. Navigate to the `frontend` directory:
-   ```bash
-   cd frontend
-   ```
-2. Install frontend dependencies:
-   ```bash
-   npm install
-   ```
- 
-3. Start the frontend development server:
-   ```bash
-   npm run dev
-   ```
-   The frontend application will be accessible at `http://localhost:5173`.
-
-## Importing Sample Data
+### Importing Sample Data
 
 To populate your database with sample users and products from FakeStoreAPI, run the `importFakeStoreData.js` script.
 
@@ -101,6 +85,24 @@ After running the `import:fakestore` script, you can log in with the following u
 - **User 3:**
   - Email: `kavisha@gmail.com`
   - Password: `12345678`
+
+
+### Frontend Setup
+1. Navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+2. Install frontend dependencies:
+   ```bash
+   npm install
+   ```
+ 
+3. Start the frontend development server:
+   ```bash
+   npm run dev
+   ```
+   The frontend application will be accessible at `http://localhost:5173`.
+
 
 ## Running the Application
 
