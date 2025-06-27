@@ -64,4 +64,24 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Get Products by User ID
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const products = await Product.find({ user: req.params.userId });
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get All Categories
+router.get("/categories", async (req, res) => {
+  try {
+    const categories = await Product.distinct("category");
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 export default router;

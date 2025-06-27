@@ -5,6 +5,8 @@ import styled from "styled-components";
 import AddProduct from "./AddProduct";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import ManageProducts from "./ManageProducts";
+import EditProduct from "./EditProduct";
 
 // Re-defining TextReveal and AnimatedProductCard to ensure they are available in this scope
 const TextReveal = ({ children, delay = 0 }) => (
@@ -915,6 +917,7 @@ function App() {
               <a href="#">New Arrivals</a>
               <a href="#">Sale</a>
               {user && <Link to="/add-product">Add Product</Link>}
+              {user && <Link to="/manage-products">Manage Products</Link>}
               {user ? (
                 <>
                   <span>Welcome, {user.username}!</span>
@@ -1260,6 +1263,14 @@ function App() {
           <Route
             path="/add-product"
             element={user ? <AddProduct /> : <Login />}
+          />
+          <Route
+            path="/manage-products"
+            element={user ? <ManageProducts /> : <Login />}
+          />
+          <Route
+            path="/edit-product/:id"
+            element={user ? <EditProduct /> : <Login />}
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
